@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1e070d">
+  <title>A Little Monday Escape</title>
+
+  <!-- Link preview text (shows up when the link is sent in WhatsApp / iMessage) -->
+  <meta name="description" content="A little invitation just for you...">
+  <meta property="og:title" content="A little invitation just for you...">
+  <meta property="og:description" content="Open me, Princess 👑">
+
+  <!-- Fonts: Bodoni Moda (high-contrast cocktail-menu serif) + Jost (clean geometric sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       1. DESIGN TOKENS
+       ========================================================= */
+    :root {
+      color-scheme: dark;
+      --black:      #000000;
+      --wine-deep:  #1e070d;
+      --wine:       #4a0f1f;
+      --claret:     #7d1630;
+      --gold:       #c9a45c;
+      --gold-soft:  #e3c98f;
+      --champagne:  #f1e6d2;
+      --muted:      rgba(241, 230, 210, 0.66);
+      --hairline:   rgba(201, 164, 92, 0.35);
+
+      --serif: "Bodoni Moda", "Bodoni 72", Didot, Georgia, serif;
+      --sans:  "Jost", "Futura", "Avenir Next", system-ui, sans-serif;
+      --ease:  cubic-bezier(.22, 1, .36, 1);
+    }
+
+    /* =========================================================
+       2. BASE
+       ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { height: 100%; background: var(--black); }
+    :root {
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    body {
+      min-height: 100%;
+      font-family: var(--sans);
+      color: var(--champagne);
+      background:
+        radial-gradient(120% 70% at 50% -10%, #3d0c1a 0%, var(--wine-deep) 45%, var(--black) 100%);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* =========================================================
+       3. ATMOSPHERE: pendant-lamp light, drifting glow, film grain
+       ========================================================= */
+    .lamp {
+      position: fixed; inset: 0 0 auto; height: 100%;
+      background: radial-gradient(45% 55% at 50% 0%, rgba(227, 201, 143, 0.14), transparent 70%);
+      pointer-events: none;
+      animation: flicker 7s ease-in-out infinite;
+    }
+    .glow {
+      position: fixed; width: 70vmax; height: 70vmax; left: 50%; top: 60%;
+      translate: -50% -50%;
+      background: radial-gradient(circle, rgba(125, 22, 48, 0.35), transparent 60%);
+      filter: blur(30px);
+      pointer-events: none;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .grain {
+      position: fixed; inset: 0; pointer-events: none; opacity: 0.08; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    @keyframes flicker { 0%, 100% { opacity: 1; } 48% { opacity: .85; } 52% { opacity: .95; } }
+    @keyframes drift   { to { translate: -40% -58%; } }
+
+    /* Celebration canvas sits above everything */
+    #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; }
+
+    /* =========================================================
+       4. LAYOUT + ARCHED CARD (art-deco bar window)
+       ========================================================= */
+    main {
+      position: relative; z-index: 1;
+      min-height: 100vh; min-height: 100svh;
+      display: grid; place-items: center;
+      padding: 2rem 1.1rem;
+    }
+
+    .invite {
+      position: relative;
+      width: min(100%, 27rem);
+      padding: clamp(2rem, 8vw, 2.8rem) clamp(1.4rem, 6vw, 2.6rem) clamp(2rem, 7vw, 2.6rem);
+      text-align: center;
+      /* Oversized top radii are scaled down by the browser into a perfect semicircle at any width */
+      border-radius: 14rem 14rem 1.25rem 1.25rem;
+      border: 1px solid var(--hairline);
+      background: linear-gradient(180deg, rgba(74, 15, 31, 0.38), rgba(8, 2, 4, 0.78));
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow:
+        0 50px 90px -35px rgba(0, 0, 0, 0.9),
+        inset 0 1px 0 rgba(227, 201, 143, 0.14);
+    }
+    /* Inner hairline, like a printed bar menu */
+    .invite::before {
+      content: ""; position: absolute; inset: 9px; pointer-events: none;
+      border-radius: 14rem 14rem .8rem .8rem;
+      border: 1px solid rgba(201, 164, 92, 0.13);
+    }
+
+    /* =========================================================
+       5. THE COUPE GLASSES (the hero moment)
+       ========================================================= */
+    .glasses {
+      position: relative;
+      width: 240px; height: 150px;
+      margin: 0 auto 1.4rem;
+    }
+    .glass {
+      position: absolute; bottom: 0; left: 50%;
+      width: 92px; height: auto;
+      overflow: visible;
+      transform: translateX(-50%);
+      transform-origin: 50% 90%;
+      filter: drop-shadow(0 0 14px rgba(201, 164, 92, 0.28));
+    }
+    .glass .outline {
+      fill: none; stroke: var(--gold); stroke-width: 1.4;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    .glass .bubble { fill: var(--champagne); opacity: 0; }
+
+    /* Glass A draws itself, then fills */
+    .glass-a .outline   { stroke-dasharray: 1; stroke-dashoffset: 1; }
+    .glass-a .liquid    { transform: translateY(46px); }
+    .glass-a .cherry    { opacity: 0; transform-origin: 92px 44px; }
+
+    body.ready .glass-a .outline { animation: draw 1.5s var(--ease) forwards; }
+    body.ready .glass-a .outline:nth-of-type(2) { animation-delay: .25s; }
+    body.ready .glass-a .outline:nth-of-type(3) { animation-delay: .45s; }
+    body.ready .glass-a .liquid  { animation: pour 1.6s var(--ease) 1.1s forwards; }
+    body.ready .glass-a .cherry  { animation: drop .9s var(--ease) 2.3s forwards; }
+    body.ready .glass .bubble    { animation: bubble 2.8s ease-in infinite; }
+    body.ready .glass .bubble:nth-of-type(1) { animation-delay: 2.4s; }
+    body.ready .glass .bubble:nth-of-type(2) { animation-delay: 3.1s; }
+    body.ready .glass .bubble:nth-of-type(3) { animation-delay: 3.7s; }
+    body.ready .glass .bubble:nth-of-type(4) { animation-delay: 4.3s; }
+
+    /* Glass B waits off-stage, already poured */
+    .glass-b { opacity: 0; transform: translateX(40%); }
+
+    /* "Tell me more": the cherry gives a little wink */
+    .glasses.tease .cherry { animation: wiggle .8s var(--ease); opacity: 1; }
+
+    /* "I'd love to!": the second glass slides in and they clink */
+    body.said-yes .glass-a { animation: clinkA 1.3s var(--ease) forwards; }
+    body.said-yes .glass-b { animation: clinkB 1.3s var(--ease) forwards; }
+
+    @keyframes draw   { to { stroke-dashoffset: 0; } }
+    @keyframes pour   { to { transform: translateY(0); } }
+    @keyframes drop   { 0% { opacity: 0; transform: translateY(-14px); } 60% { opacity: 1; transform: translateY(1px); } 100% { opacity: 1; transform: none; } }
+    @keyframes bubble { 0% { opacity: 0; transform: translateY(0); } 15% { opacity: .75; } 100% { opacity: 0; transform: translateY(-34px); } }
+    @keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 55% { transform: rotate(9deg); } 80% { transform: rotate(-4deg); } }
+
+    @keyframes clinkA {
+      0%   { transform: translateX(-50%) rotate(0); }
+      55%  { transform: translateX(calc(-50% - 60px)) rotate(0); }
+      72%  { transform: translateX(calc(-50% - 48px)) rotate(9deg); }
+      84%  { transform: translateX(calc(-50% - 54px)) rotate(4deg); }
+      100% { transform: translateX(calc(-50% - 56px)) rotate(5deg); }
+    }
+    @keyframes clinkB {
+      0%   { opacity: 0; transform: translateX(40%) rotate(0); }
+      55%  { opacity: 1; transform: translateX(calc(-50% + 60px)) rotate(0); }
+      72%  { opacity: 1; transform: translateX(calc(-50% + 48px)) rotate(-9deg); }
+      84%  { opacity: 1; transform: translateX(calc(-50% + 54px)) rotate(-4deg); }
+      100% { opacity: 1; transform: translateX(calc(-50% + 56px)) rotate(-5deg); }
+    }
+
+    /* =========================================================
+       6. TYPOGRAPHY
+       ========================================================= */
+    .intro {
+      font-size: .95rem; font-weight: 300; letter-spacing: .06em;
+      color: var(--gold-soft);
+    }
+    h1 {
+      margin-top: .7rem;
+      font-family: var(--serif); font-style: italic; font-weight: 400;
+      font-size: clamp(2.4rem, 10.5vw, 3.4rem);
+      line-height: 1.02; letter-spacing: -.01em;
+      color: var(--champagne);
+      text-shadow: 0 0 28px rgba(227, 201, 143, 0.25);
+      text-wrap: balance;
+    }
+    .ornament { display: block; width: 120px; margin: 1.3rem auto 1.2rem; color: var(--gold); opacity: .8; }
+    .question {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(1.25rem, 5.4vw, 1.5rem);
+      line-height: 1.35;
+      text-wrap: balance;
+    }
+    .support {
+      margin: .9rem auto 0; max-width: 22rem;
+      font-weight: 300; font-size: 1rem; line-height: 1.6;
+      color: var(--muted);
+    }
+
+    /* Load sequence: text fades up after the glass is poured */
+    .reveal { opacity: 0; filter: blur(6px); }
+    body.ready .reveal { animation: appear 1.1s var(--ease) forwards; animation-delay: var(--d, 0s); }
+    @keyframes appear { to { opacity: 1; filter: blur(0); } }
+
+    /* =========================================================
+       7. BUTTONS
+       ========================================================= */
+    .actions {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem;
+      margin-top: 1.8rem;
+    }
+    .btn {
+      position: relative; overflow: hidden;
+      flex: 1 1 10.5rem;
+      min-height: 3.2rem; padding: .85rem 1.4rem;
+      border-radius: 999px;
+      font: 500 1rem/1 var(--sans); letter-spacing: .02em;
+      cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+      transition: transform .35s var(--ease), box-shadow .35s var(--ease), background-color .35s, border-color .35s, color .35s;
+    }
+    .btn-gold {
+      border: 0;
+      color: #2a0810;
+      background: linear-gradient(135deg, var(--gold-soft), var(--gold) 55%, #a8823e);
+      box-shadow: 0 12px 30px -12px rgba(201, 164, 92, 0.7);
+    }
+    /* Champagne shine that sweeps across on hover */
+    .btn-gold::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+      transform: skewX(-20deg);
+    }
+    .btn-line {
+      color: var(--champagne);
+      background: transparent;
+      border: 1px solid rgba(201, 164, 92, 0.55);
+    }
+    @media (hover: hover) {
+      .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -12px rgba(201, 164, 92, 0.85); }
+      .btn-gold:hover::after { left: 130%; transition: left .9s var(--ease); }
+      .btn-line:hover { transform: translateY(-2px); border-color: var(--gold); background-color: rgba(201, 164, 92, 0.09); }
+    }
+    .btn:active { transform: translateY(0) scale(.98); }
+    .btn:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 3px; }
+
+    /* =========================================================
+       8. "TELL ME MORE" PANEL (smooth height reveal)
+       ========================================================= */
+    .more {
+      display: grid; grid-template-rows: 0fr; opacity: 0;
+      transition: grid-template-rows .7s var(--ease), opacity .6s var(--ease);
+    }
+    .more.open { grid-template-rows: 1fr; opacity: 1; }
+    .more > div { overflow: hidden; }
+    .more p {
+      margin-top: 1.5rem; padding-top: 1.3rem;
+      border-top: 1px solid rgba(201, 164, 92, 0.2);
+      font-family: var(--serif); font-style: italic;
+      font-size: 1.12rem; line-height: 1.55;
+      color: var(--gold-soft);
+      text-wrap: balance;
+    }
+
+    /* =========================================================
+       9. STAGE SWAP (invitation -> "it's a date")
+       ========================================================= */
+    .stage { transition: opacity .45s ease, filter .45s ease; }
+    .stage.out { opacity: 0; filter: blur(8px); }
+    .stage-yes { opacity: 0; filter: blur(8px); }
+    .stage-yes.in { opacity: 1; filter: blur(0); }
+    .stage-yes h2 {
+      font-family: var(--serif); font-style: italic; font-weight: 400;
+      font-size: clamp(2rem, 9vw, 2.7rem); line-height: 1.08;
+      text-shadow: 0 0 28px rgba(227, 201, 143, 0.3);
+      text-wrap: balance;
+      outline: none;
+    }
+    .stage-yes .support { margin-top: 1rem; }
+    .stage-yes .actions { margin-top: 1.6rem; }
+    .stage-yes .btn { flex: 0 1 auto; padding-inline: 2rem; }
+
+    /* =========================================================
+       10. REDUCED MOTION: show the finished scene, no movement
+       ========================================================= */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; filter: none; }
+      .glass-a .outline { stroke-dashoffset: 0; }
+      .glass-a .liquid { transform: none; }
+      .glass-a .cherry { opacity: 1; }
+      body.said-yes .glass-a { transform: translateX(calc(-50% - 56px)) rotate(5deg); }
+      body.said-yes .glass-b { opacity: 1; transform: translateX(calc(-50% + 56px)) rotate(-5deg); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Atmosphere layers -->
+  <div class="lamp" aria-hidden="true"></div>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <main>
+    <article class="invite">
+
+      <!-- Two coupe glasses: one visible, one waiting for her "yes" -->
+      <div class="glasses" id="glasses" aria-hidden="true">
+        <svg class="glass glass-a" viewBox="0 0 120 170">
+          <defs>
+            <clipPath id="bowlA"><path d="M12 44 C14 79 35 90 60 90 C85 90 106 79 108 44 Z"/></clipPath>
+            <linearGradient id="wineA" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#b3264a"/><stop offset="1" stop-color="#4a0f1f"/>
+            </linearGradient>
+            <radialGradient id="cherryG" cx=".35" cy=".35" r=".7">
+              <stop offset="0" stop-color="#e0506f"/><stop offset="1" stop-color="#6b0f24"/>
+            </radialGradient>
+          </defs>
+          <g clip-path="url(#bowlA)">
+            <rect class="liquid" x="0" y="50" width="120" height="50" fill="url(#wineA)"/>
+            <circle class="bubble" cx="46" cy="84" r="1.3"/>
+            <circle class="bubble" cx="64" cy="86" r="1"/>
+            <circle class="bubble" cx="76" cy="82" r="1.4"/>
+            <circle class="bubble" cx="55" cy="87" r="0.9"/>
+          </g>
+          <path class="outline" pathLength="1" d="M10 44 C12 81 34 92 60 92 C86 92 108 81 110 44"/>
+          <path class="outline" pathLength="1" d="M10 44 A50 4 0 1 0 110 44 A50 4 0 1 0 10 44"/>
+          <path class="outline" pathLength="1" d="M60 92 L60 150 M36 155 Q60 147 84 155"/>
+          <g class="cherry">
+            <path d="M92 33 C93 24 98 18 105 15" fill="none" stroke="#c9a45c" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="92" cy="38" r="6" fill="url(#cherryG)"/>
+          </g>
+        </svg>
+
+        <svg class="glass glass-b" viewBox="0 0 120 170">
+          <defs>
+            <clipPath id="bowlB"><path d="M12 44 C14 79 35 90 60 90 C85 90 106 79 108 44 Z"/></clipPath>
+          </defs>
+          <g clip-path="url(#bowlB)">
+            <rect x="0" y="50" width="120" height="50" fill="url(#wineA)"/>
+            <circle class="bubble" cx="50" cy="85" r="1.2"/>
+            <circle class="bubble" cx="70" cy="84" r="1"/>
+          </g>
+          <path class="outline" d="M10 44 C12 81 34 92 60 92 C86 92 108 81 110 44"/>
+          <path class="outline" d="M10 44 A50 4 0 1 0 110 44 A50 4 0 1 0 10 44"/>
+          <path class="outline" d="M60 92 L60 150 M36 155 Q60 147 84 155"/>
+        </svg>
+      </div>
+
+      <!-- Stage 1: the invitation -->
+      <section class="stage stage-invite" id="stageInvite">
+        <p class="intro reveal" style="--d:.5s">A little invitation just for you, Koko...</p>
+        <h1 class="reveal" style="--d:.8s">A Little Monday Escape</h1>
+
+        <svg class="ornament reveal" style="--d:1.1s" viewBox="0 0 120 10" aria-hidden="true">
+          <path d="M0 5 H50 M70 5 H120" stroke="currentColor" stroke-width=".8"/>
+          <path d="M60 1 L64 5 L60 9 L56 5 Z" fill="none" stroke="currentColor" stroke-width=".8"/>
+        </svg>
+
+        <p class="question reveal" style="--d:1.4s">Wanna take a Monday drink with me, Princess  👑😉</p>
+        <p class="support reveal" style="--d:1.7s">Just good drinks, great conversation, and a little trouble perhaps...</p>
+
+        <div class="actions reveal" style="--d:2.1s">
+          <button type="button" class="btn btn-gold" id="yesBtn">I’d love to! ❤️</button>
+          <button type="button" class="btn btn-line" id="moreBtn" aria-expanded="false" aria-controls="more">Tell me more 😉</button>
+        </div>
+
+        <div class="more" id="more">
+          <div>
+            <p>Well, let me give you a little preview. An evening filled with good drinks, genuine conversations, laughter, and perhaps a little chemistry. 
+
+I'll be waiting for you at 6:00 PM. All you have to do is show up and bring that lovely smile of yours. I'll take care of the rest, Princess</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stage 2: after she says yes -->
+      <section class="stage stage-yes" id="stageYes" hidden aria-live="polite">
+        <p class="intro">Monday it is, Princess.</p>
+        <h2 tabindex="-1" style="margin-top:.7rem">Well, that’s a date then! 🥂</h2>
+        <p class="support">Leave the place to me. You just bring the smile.</p>
+        <div class="actions">
+          <!-- Your WhatsApp link from the original "yes" page -->
+          <a class="btn btn-gold" href="https://wa.me/21658730789?text=Yes%2C%20Azizi%20%E2%80%A6%20let's%20make%20Monday%20memorable%20%E2%9D%A4%EF%B8%8F" target="_blank" rel="noopener">Send me your yes 💌</a>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      /* ---------- Elements & settings ---------- */
+      const body        = document.body;
+      const yesBtn      = document.getElementById("yesBtn");
+      const moreBtn     = document.getElementById("moreBtn");
+      const morePanel   = document.getElementById("more");
+      const glasses     = document.getElementById("glasses");
+      const stageInvite = document.getElementById("stageInvite");
+      const stageYes    = document.getElementById("stageYes");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* ---------- Start the opening sequence ---------- */
+      requestAnimationFrame(() => body.classList.add("ready"));
+
+      /* ---------- "Tell me more": toggle the teaser ---------- */
+      moreBtn.addEventListener("click", () => {
+        const isOpen = moreBtn.getAttribute("aria-expanded") === "true";
+        moreBtn.setAttribute("aria-expanded", String(!isOpen));
+        morePanel.classList.toggle("open", !isOpen);
+        moreBtn.textContent = isOpen ? "Tell me more 😉" : "That’s all I’ll say 🤫";
+
+        // Make the cherry wink each time the secret is revealed
+        if (!isOpen) {
+          glasses.classList.remove("tease");
+          void glasses.offsetWidth; // restart the animation
+          glasses.classList.add("tease");
+        }
+      });
+
+      /* ---------- "I'd love to!": clink, sparkle, swap the message ---------- */
+      yesBtn.addEventListener("click", () => {
+        if (body.classList.contains("said-yes")) return;
+        yesBtn.disabled = true;
+        moreBtn.disabled = true;
+        body.classList.add("said-yes");
+
+        const clinkMoment = reduceMotion ? 0 : 920; // matches the 72% mark of the clink animation
+
+        setTimeout(() => {
+          if (!reduceMotion) {
+            const r = glasses.getBoundingClientRect();
+            burst(r.left + r.width / 2, r.top + r.height * 0.3);
+            shower();
+            if (navigator.vibrate) navigator.vibrate(18); // tiny "clink" on phones
+          }
+
+          stageInvite.classList.add("out");
+          setTimeout(() => {
+            stageInvite.hidden = true;
+            stageYes.hidden = false;
+            setTimeout(() => {
+              stageYes.classList.add("in");
+              stageYes.querySelector("h2").focus({ preventScroll: true });
+            }, 30);
+          }, reduceMotion ? 0 : 450);
+        }, clinkMoment);
+      });
+
+      /* =========================================================
+         Celebration particles: gold flecks + wine-red sparks
+         ========================================================= */
+      const canvas = document.getElementById("fx");
+      const ctx = canvas.getContext("2d");
+      const colors = ["#c9a45c", "#e3c98f", "#f1e6d2", "#b3264a", "#e0506f"];
+      let W = 0, H = 0, particles = [], running = false;
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = window.innerWidth;
+        H = window.innerHeight;
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      function spawn(x, y, vx, vy) {
+        particles.push({
+          x, y, vx, vy,
+          rot: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 0.3,
+          w: 3 + Math.random() * 5,
+          h: 1.5 + Math.random() * 2.5,
+          color: colors[(Math.random() * colors.length) | 0],
+          round: Math.random() < 0.35,
+          life: 0,
+          maxLife: 140 + Math.random() * 90
+        });
+      }
+
+      // Radial burst from the point where the glasses touch
+      function burst(x, y) {
+        for (let i = 0; i < 120; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 2 + Math.random() * 7;
+          spawn(x, y, Math.cos(angle) * speed, Math.sin(angle) * speed - 3);
+        }
+        start();
+      }
+
+      // Soft gold rain from the top of the screen
+      function shower() {
+        let ticks = 0;
+        const id = setInterval(() => {
+          for (let i = 0; i < 5; i++) {
+            spawn(Math.random() * W, -10, (Math.random() - 0.5) * 1.2, 1 + Math.random() * 2);
+          }
+          start();
+          if (++ticks > 32) clearInterval(id);
+        }, 70);
+      }
+
+      function start() {
+        if (running) return;
+        running = true;
+        requestAnimationFrame(tick);
+      }
+
+      function tick() {
+        ctx.clearRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "lighter"; // gives the flecks a soft glow on the dark background
+
+        particles = particles.filter(p => p.life < p.maxLife && p.y < H + 30);
+
+        for (const p of particles) {
+          p.life++;
+          p.vy += 0.1;          // gravity
+          p.vx *= 0.97;         // air drag
+          p.vy *= 0.97;
+          p.x += p.vx + Math.sin(p.life * 0.07 + p.rot) * 0.45; // gentle flutter
+          p.y += p.vy;
+          p.rot += p.spin;
+
+          ctx.globalAlpha = Math.min(1, (1 - p.life / p.maxLife) * 1.6);
+          ctx.fillStyle = p.color;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          if (p.round) {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.h, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            ctx.scale(1, Math.cos(p.life * 0.15)); // flipping-foil effect
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          }
+          ctx.restore();
+        }
+
+        ctx.globalAlpha = 1;
+        if (particles.length) {
+          requestAnimationFrame(tick);
+        } else {
+          running = false;
+          ctx.clearRect(0, 0, W, H);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
